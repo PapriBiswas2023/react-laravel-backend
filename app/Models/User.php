@@ -40,6 +40,7 @@ class User extends Authenticatable
         'two_factor_recovery_codes',
         'two_factor_secret',
     ];
+    public $timestamps=false;
 
     /**
      * The attributes that should be cast.
