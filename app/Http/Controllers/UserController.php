@@ -9,26 +9,26 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    //
-    function register(Request $req)
+    // ...
+
+    public function register(Request $req)
     {
-        $user= new User;
-        $user->username=$req->input('username');
-        $user->useremail=$req->input('useremail');
-        $user->password=$req->Hash::make(input('password'));
+        $user = new User;
+        $user->name = $req->input('name');
+        $user->email = $req->input('email');
+        $user->password = Hash::make($req->input('password')); // Fix password hashing
         $user->save();
-        return $req->input();
+        
+        return response()->json($user, 201); // Return the user and HTTP status code 201 (created)
     }
-    function login(Request $req)
+
+    public function login(Request $req)
     {
-        $user =User::where('useremail',$req->useremail)->first();
-        if(!$user || !Hash::check($req->password,$user->password))
-        {
-            return response([
-                'error'=>["Email or password is not matched"]
-            ]);
+        $user = User::where('email', $req->input('email'))->first(); // Fix input key for email
+        if (!$user || !Hash::check($req->input('password'), $user->password)) {
+            return response()->json(['error' => 'Email or password is not matched'], 401); // Unauthorized status code
         }
-        return $user;
+
+        return response()->json($user, 200); // Return the user and HTTP status code 200 (OK)
     }
-    
 }
