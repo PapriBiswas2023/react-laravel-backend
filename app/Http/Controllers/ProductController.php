@@ -8,17 +8,34 @@ use App\Models\Product;
 
 class ProductController extends Controller
 {
-    function addProduct(Request $req)
+    public function addProduct(Request $req)
     {
-        $product= new Product;
-        $product->name=$req->input('name');
-        $product->description=$req->input('description');
-        $product->price=$req->input('price');
-        //$product->updated_at=$req->input('updated_at');
-       // $product->created_at=$req->input('created_at');
-       $product->file_path=$req->file('file')->store('products');
-       $product->save();
-        return $product;
+        // Validate request data
+        $validatedData = $req->validate([
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'price' => 'required|numeric',
+            'file' => 'required|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
 
+        // Create a new Product instance
+        $product = new Product;
+        $product->name = $validatedData['name'];
+        $product->description = $validatedData['description'];
+        $product->price = $validatedData['price'];
+
+        // Handle file upload
+        try {
+            $product->file_path = $req->file('file')->store('products');
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'File upload failed.'], 500);
+        }
+
+        // Save the product
+        $product->save();
+
+        // Return a JSON response
+        return response()->json(['message' => 'Product added successfully', 'product' => $product], 201);
     }
 }
+
