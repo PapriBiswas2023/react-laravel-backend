@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('file_path'); // Use string for file paths
             $table->text('description');
             $table->decimal('price', 8, 2); // Assuming price is a decimal number
-
             $table->timestamps();
         });
     }
