@@ -21,4 +21,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::post('register',[UserController::class,'register']);
 Route::post('login',[UserController::class,'login']);
-Route::post('addProduct',[ProductController::class,'addProduct']);
+//Route::post('addProduct',[ProductController::class,'addProduct']);
+Route::middleware('auth:sanctum')->post('addProduct', [ProductController::class, 'addProduct']);
+
