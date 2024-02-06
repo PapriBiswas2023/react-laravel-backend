@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 use App\Models\Product;
 
 class ProductController extends Controller
@@ -26,8 +26,15 @@ class ProductController extends Controller
 
         // Handle file upload
         try {
-            $product->file_path = $req->file('file')->store('products');
+            // Check if a file was successfully uploaded
+            if ($req->hasFile('file') && $req->file('file')->isValid()) {
+                $product->file_path = $req->file('file')->store('products');
+            } else {
+                // Return an error response if file upload failed
+                return response()->json(['error' => 'File upload failed.'], 500);
+            }
         } catch (\Exception $e) {
+            // Return an error response if an exception occurs during file upload
             return response()->json(['error' => 'File upload failed.'], 500);
         }
 
@@ -38,4 +45,3 @@ class ProductController extends Controller
         return response()->json(['message' => 'Product added successfully', 'product' => $product], 201);
     }
 }
-
